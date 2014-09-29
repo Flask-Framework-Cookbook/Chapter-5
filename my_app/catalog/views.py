@@ -56,9 +56,6 @@ def products(page=1):
 def create_product():
     form = ProductForm(meta={'csrf': False})
 
-    categories = [(c.id, c.name) for c in Category.query.all()]
-    form.category.choices = categories
-
     if form.validate_on_submit():
         name = form.name.data
         price = form.price.data
@@ -112,10 +109,12 @@ def create_category():
         flash(
             'The category %s has been created' % name, 'success'
         )
-        return redirect(url_for('catalog.category', id=category.id))
+        return redirect(
+            url_for('catalog.category', id=category.id)
+        )
 
     if form.errors:
-        flash(form.errors)
+        flash(form.errors, 'danger')
 
     return render_template('category-create.html', form=form)
 
