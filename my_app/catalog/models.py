@@ -33,11 +33,18 @@ class Category(db.Model):
         return '<Category %d>' % self.id
 
 
-class ProductForm(Form):
+class NameForm(Form):
     name = TextField('Name', validators=[InputRequired()])
+
+
+class ProductForm(NameForm):
     price = DecimalField('Price', validators=[
         InputRequired(), NumberRange(min=Decimal('0.0'))
     ])
     category = SelectField(
         'Category', validators=[InputRequired()], coerce=int
     )
+
+
+class CategoryForm(NameForm):
+    pass
