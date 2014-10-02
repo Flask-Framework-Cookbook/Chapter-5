@@ -2,6 +2,7 @@ from wtforms import StringField, DecimalField, SelectField
 from decimal import Decimal
 from flask_wtf import FlaskForm
 from wtforms.validators import InputRequired, NumberRange, ValidationError
+from wtforms.widgets import html_params, Select, HTMLString
 from my_app import db
 
 class Product(db.Model):
@@ -37,7 +38,24 @@ class NameForm(FlaskForm):
     name = StringField('Name', validators=[InputRequired()])
 
 
+class CustomCategoryInput(Select):
+
+    def __call__(self, field, **kwargs):
+        kwargs.setdefault('id', field.id)
+        html = []
+        for val, label, selected in field.iter_choices():
+            html.append(
+                '<input type="radio" %s> %s' % (
+                    html_params(
+                        name=field.name, value=val, checked=selected, **kwargs
+                    ), label
+                )
+            )
+        return HTMLString(' '.join(html))
+
+
 class CategoryField(SelectField):
+    widget = CustomCategoryInput()
 
     def iter_choices(self):
         categories = [(c.id, c.name) for c in Category.query.all()]
