@@ -1,7 +1,9 @@
+import os
 from functools import wraps
+from werkzeug import secure_filename
 from flask import request, Blueprint, render_template, jsonify, flash, \
     redirect, url_for
-from my_app import db, app
+from my_app import db, app, ALLOWED_EXTENSIONS
 from my_app.catalog.models import Product, Category, ProductForm, CategoryForm
 from sqlalchemy.orm.util import join
 
@@ -24,6 +26,11 @@ def template_or_json(template=None):
                 return render_template(template, **ctx)
         return decorated_fn
     return decorated
+
+
+def allowed_file(filename):
+    return '.' in filename and \
+            filename.lower().rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 
 @app.errorhandler(404)
@@ -62,7 +69,11 @@ def create_product():
         category = Category.query.get_or_404(
             form.category.data
         )
-        product = Product(name, price, category)
+        image = request.files['image']
+        if image and allowed_file(image.filename):
+            filename = secure_filename(image.filename)
+            image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        product = Product(name, price, category, filename)
         db.session.add(product)
         db.session.commit()
         flash('The product %s has been created' % name, 'success')

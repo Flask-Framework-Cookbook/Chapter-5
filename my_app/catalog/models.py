@@ -1,5 +1,5 @@
 from decimal import Decimal
-from wtforms import TextField, DecimalField, SelectField
+from wtforms import TextField, DecimalField, SelectField, FileField
 from wtforms.validators import InputRequired, NumberRange, ValidationError
 from wtforms.widgets import html_params, Select, HTMLString
 from flask_wtf import Form
@@ -13,11 +13,13 @@ class Product(db.Model):
     category = db.relationship(
         'Category', backref=db.backref('products', lazy='dynamic')
     )
+    image_path = db.Column(db.String(255))
 
-    def __init__(self, name, price, category):
+    def __init__(self, name, price, category, image_path):
         self.name = name
         self.price = price
         self.category = category
+        self.image_path = image_path
 
     def __repr__(self):
         return '<Product %d>' % self.id
@@ -77,6 +79,7 @@ class ProductForm(NameForm):
     category = CategoryField(
         'Category', validators=[InputRequired()], coerce=int
     )
+    image = FileField('Product Image')
 
 
 def check_duplicate_category(case_sensitive=True):
