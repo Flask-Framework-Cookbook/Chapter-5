@@ -61,7 +61,7 @@ def products(page=1):
 
 @catalog.route('/product-create', methods=['GET', 'POST'])
 def create_product():
-    form = ProductForm(request.form, csrf_enabled=False)
+    form = ProductForm(request.form)
 
     if form.validate_on_submit():
         name = form.name.data
@@ -70,6 +70,7 @@ def create_product():
             form.category.data
         )
         image = request.files['image']
+        filename = ''
         if image and allowed_file(image.filename):
             filename = secure_filename(image.filename)
             image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
@@ -110,7 +111,7 @@ def product_search(page=1):
 
 @catalog.route('/category-create', methods=['GET', 'POST'])
 def create_category():
-    form = CategoryForm(request.form, csrf_enabled=False)
+    form = CategoryForm(request.form)
 
     if form.validate_on_submit():
         name = form.name.data
