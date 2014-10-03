@@ -6,6 +6,7 @@
         action="{{ url_for('catalog.create_product') }}"
         role="form"
         enctype="multipart/form-data">
+      {{ form.csrf_token }}
       <div class="form-group">{{ form.name.label }}: {{ form.name() }}</div>
       <div class="form-group">{{ form.price.label }}: {{ form.price() }}</div>
       <div class="form-group">{{ form.category.label }}: {{ form.category() }}</div>

@@ -61,7 +61,7 @@ def products(page=1):
 
 @catalog.route('/product-create', methods=['GET', 'POST'])
 def create_product():
-    form = ProductForm(meta={'csrf': False})
+    form = ProductForm()
 
     if form.validate_on_submit():
         name = form.name.data
@@ -110,7 +110,7 @@ def product_search(page=1):
 
 @catalog.route('/category-create', methods=['GET', 'POST'])
 def create_category():
-    form = CategoryForm(meta={'csrf': False})
+    form = CategoryForm()
 
     if form.validate_on_submit():
         name = form.name.data
