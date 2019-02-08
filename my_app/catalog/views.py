@@ -2,7 +2,7 @@ from functools import wraps
 from flask import request, Blueprint, render_template, jsonify, flash, \
     redirect, url_for
 from my_app import db, app
-from my_app.catalog.models import Product, Category, ProductForm
+from my_app.catalog.models import Product, Category, ProductForm, CategoryForm
 from sqlalchemy.orm.util import join
 
 catalog = Blueprint('catalog', __name__)
@@ -100,13 +100,24 @@ def product_search(page=1):
     )
 
 
-@catalog.route('/category-create', methods=['POST',])
+@catalog.route('/category-create', methods=['GET', 'POST'])
 def create_category():
-    name = request.form.get('name')
-    category = Category(name)
-    db.session.add(category)
-    db.session.commit()
-    return render_template('category.html', category=category)
+    form = CategoryForm(csrf_enabled=False)
+
+    if form.validate_on_submit():
+        name = form.name.data
+        category = Category(name)
+        db.session.add(category)
+        db.session.commit()
+        flash(
+            'The category %s has been created' % name, 'success'
+        )
+        return redirect(url_for('catalog.category', id=category.id))
+
+    if form.errors:
+        flash(form.errors)
+
+    return render_template('category-create.html', form=form)
 
 
 @catalog.route('/category/<id>')
