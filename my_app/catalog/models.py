@@ -2,7 +2,8 @@ from wtforms import StringField, DecimalField, SelectField
 from decimal import Decimal
 from flask_wtf import FlaskForm
 from wtforms.validators import InputRequired, NumberRange, ValidationError
-from wtforms.widgets import html_params, Select, HTMLString
+from wtforms.widgets import html_params, Select
+from markupsafe import Markup
 from my_app import db
 
 class Product(db.Model):
@@ -51,7 +52,7 @@ class CustomCategoryInput(Select):
                     ), label
                 )
             )
-        return HTMLString(' '.join(html))
+        return Markup(' '.join(html))
 
 
 class CategoryField(SelectField):
