@@ -5,7 +5,7 @@ from flask import request, Blueprint, render_template, jsonify, flash, \
     redirect, url_for
 from my_app import db, app, ALLOWED_EXTENSIONS
 from my_app.catalog.models import Product, Category, ProductForm, CategoryForm
-from sqlalchemy.orm.util import join
+from sqlalchemy.orm import join
 
 catalog = Blueprint('catalog', __name__)
 
